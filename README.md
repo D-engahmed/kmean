@@ -1,89 +1,113 @@
 # K-Means Clustering Algorithm
 
 ## Overview
-This Jupyter notebook provides a comprehensive explanation of the K-Means clustering algorithm, including theoretical foundations, mathematical formulations, implementation examples, and methods for selecting the optimal number of clusters.
+
+This repository provides a comprehensive explanation of the K-Means clustering algorithm, including theoretical foundations, mathematical formulations, implementation examples, and methods for selecting the optimal number of clusters.
 
 ## Table of Contents
-1. [Theoretical Explanation](#theoretical-explanation)
-2. [Mathematical Formulation](#mathematical-formulation)
-3. [Selecting the Number of Clusters (K)](#selecting-the-number-of-clusters-k)
-4. [Code Implementation](#code-implementation)
-5. [Elbow Method Implementation](#elbow-method-implementation)
+
+- [Theoretical Explanation](#theoretical-explanation)
+- [Mathematical Formulation](#mathematical-formulation)
+- [Selecting the Number of Clusters (K)](#selecting-the-number-of-clusters-k)
+- [Implementation](#implementation)
+- [Usage Examples](#usage-examples)
+- [Requirements](#requirements)
+- [Installation](#installation)
 
 ---
 
 ## Theoretical Explanation
+
 K-Means is an **unsupervised clustering** algorithm that partitions data into **K groups** where points within a group are more similar to each other than to those in other groups.
 
-**Goal:** Minimize the **intra-cluster variance**.
+**Goal:** Minimize the **intra-cluster variance** by grouping similar data points together.
 
-### Algorithm Steps (Lloyd's Algorithm):
-1. **Initialization**: Choose K initial centroids (randomly or using K-Means++).
-2. **Assignment Step**: Assign each data point to the nearest centroid (using Euclidean distance).
-3. **Update Step**: Recalculate centroids as the mean of all points in each cluster.
-4. **Repeat**: Steps 2 and 3 until centroids stabilize or max iterations are reached.
+### Algorithm Steps (Lloyd's Algorithm)
 
-**Advantages**:
-- Simple and fast.
-- Works well with spherical clusters of similar sizes.
+1. **Initialization**: Choose K initial centroids (randomly or using K-Means++)
+2. **Assignment Step**: Assign each data point to the nearest centroid (using Euclidean distance)
+3. **Update Step**: Recalculate centroids as the mean of all points in each cluster
+4. **Repeat**: Steps 2 and 3 until centroids stabilize or maximum iterations are reached
 
-**Disadvantages**:
-- Requires manual selection of **K**.
-- Sensitive to outliers.
-- Performs poorly with non-spherical clusters.
+### Advantages
+
+- Simple and computationally efficient
+- Works well with spherical clusters of similar sizes
+- Scales well to large datasets
+- Guaranteed convergence
+
+### Disadvantages
+
+- Requires manual selection of **K**
+- Sensitive to initialization and outliers
+- Assumes clusters are spherical and of similar size
+- Performs poorly with non-spherical or varying density clusters
 
 ---
 
 ## Mathematical Formulation
-Given a dataset \( X = \{x_1, x_2, \dots, x_n\}, \quad x_i \in \mathbb{R}^d \), we aim to partition \( X \) into \( K \) clusters \( C = \{C_1, C_2, \dots, C_K\} \) to minimize the objective function:
 
-\[
-J = \sum_{k=1}^K \sum_{x_i \in C_k} \| x_i - \mu_k \|^2
-\]
+Given a dataset **X = {x₁, x₂, ..., xₙ}** where **xᵢ ∈ ℝᵈ**, we aim to partition **X** into **K** clusters **C = {C₁, C₂, ..., Cₖ}** to minimize the objective function:
+
+```
+J = Σₖ₌₁ᴷ Σₓᵢ∈Cₖ ||xᵢ - μₖ||²
+```
 
 Where:
-- \( \mu_k = \frac{1}{|C_k|} \sum_{x_i \in C_k} x_i \) (centroid of cluster \( C_k \))
-- \( \| \cdot \| \) is the Euclidean norm
+- **μₖ = (1/|Cₖ|) Σₓᵢ∈Cₖ xᵢ** (centroid of cluster Cₖ)
+- **||·||** is the Euclidean norm
 
-**Assignment Step**:
-\[
-\text{Assign } x_i \text{ to } C_k \quad \text{if} \quad \|x_i - \mu_k\|^2 \leq \|x_i - \mu_j\|^2 \quad \forall j
-\]
+### Assignment Step
 
-**Update Step**:
-\[
-\mu_k^{\text{new}} = \frac{1}{|C_k|} \sum_{x_i \in C_k} x_i
-\]
+Assign **xᵢ** to cluster **Cₖ** if:
+```
+||xᵢ - μₖ||² ≤ ||xᵢ - μⱼ||² for all j
+```
 
-**Time Complexity**: \( O(n \cdot K \cdot d \cdot \text{iterations}) \)
+### Update Step
+
+Update centroid:
+```
+μₖⁿᵉʷ = (1/|Cₖ|) Σₓᵢ∈Cₖ xᵢ
+```
+
+**Time Complexity**: O(n · K · d · iterations)
 
 ---
 
 ## Selecting the Number of Clusters (K)
-### A) Elbow Method
-- Plot **inertia** (sum of squared distances to nearest centroid) vs. K.
-- Choose the "elbow" point where inertia decreases slowly.
 
-\[
-\text{Inertia} = \sum_{k=1}^K \sum_{x_i \in C_k} \| x_i - \mu_k \|^2
-\]
+### A) Elbow Method
+
+Plot **inertia** (sum of squared distances to nearest centroid) vs. K and choose the "elbow" point where inertia decreases slowly.
+
+```
+Inertia = Σₖ₌₁ᴷ Σₓᵢ∈Cₖ ||xᵢ - μₖ||²
+```
 
 ### B) Silhouette Score
-Measures how similar a point is to its own cluster vs. other clusters. For each point \( i \):
 
-\[
-s(i) = \frac{b(i) - a(i)}{\max(a(i), b(i))}
-\]
+Measures how similar a point is to its own cluster compared to other clusters. For each point **i**:
+
+```
+s(i) = (b(i) - a(i)) / max(a(i), b(i))
+```
 
 Where:
-- \( a(i) \): Average distance between \( i \) and all points in its cluster.
-- \( b(i) \): Minimum average distance between \( i \) and points in other clusters.
-- Range: \([-1, 1]\), higher is better.
+- **a(i)**: Average distance between **i** and all points in its cluster
+- **b(i)**: Minimum average distance between **i** and points in other clusters
+- **Range**: [-1, 1], higher values indicate better clustering
+
+### C) Gap Statistic
+
+Compares the total intra-cluster variation for different values of K with their expected values under null reference distribution of the data.
 
 ---
 
-## Code Implementation
-### Basic K-Means + Visualization
+## Implementation
+
+### Basic K-Means with Visualization
+
 ```python
 import numpy as np
 import matplotlib.pyplot as plt
@@ -94,44 +118,157 @@ from sklearn.datasets import make_blobs
 X, y_true = make_blobs(n_samples=300, centers=4, cluster_std=0.60, random_state=0)
 
 # Apply K-Means
-kmeans = KMeans(n_clusters=4, random_state=0)
+kmeans = KMeans(n_clusters=4, random_state=0, n_init=10)
 y_kmeans = kmeans.fit_predict(X)
 
 # Visualization
-plt.scatter(X[:, 0], X[:, 1], c=y_kmeans, cmap='viridis')
+plt.figure(figsize=(10, 6))
+plt.scatter(X[:, 0], X[:, 1], c=y_kmeans, cmap='viridis', alpha=0.7)
 plt.scatter(kmeans.cluster_centers_[:, 0], kmeans.cluster_centers_[:, 1],
-            s=300, c='red', marker='X', label='Centroids')
+            s=300, c='red', marker='X', label='Centroids', edgecolors='black')
+plt.title('K-Means Clustering Results')
+plt.xlabel('Feature 1')
+plt.ylabel('Feature 2')
 plt.legend()
+plt.grid(True, alpha=0.3)
 plt.show()
+
+print(f"Inertia: {kmeans.inertia_:.2f}")
 ```
 
-**Visualization Meaning**:
-- Each color represents a cluster.
-- Red `X` marks represent centroids.
+### Elbow Method Implementation
 
----
-
-## Elbow Method Implementation
 ```python
-inertia = []
-K_range = range(1, 10)
+from sklearn.metrics import silhouette_score
 
-for k in K_range:
-    kmeans = KMeans(n_clusters=k, random_state=0)
-    kmeans.fit(X)
-    inertia.append(kmeans.inertia_)
+def find_optimal_k(X, max_k=10):
+    """Find optimal number of clusters using Elbow Method and Silhouette Score"""
+    
+    inertias = []
+    silhouette_scores = []
+    K_range = range(2, max_k + 1)  # Start from 2 for silhouette score
+    
+    for k in K_range:
+        kmeans = KMeans(n_clusters=k, random_state=0, n_init=10)
+        y_pred = kmeans.fit_predict(X)
+        
+        inertias.append(kmeans.inertia_)
+        silhouette_scores.append(silhouette_score(X, y_pred))
+    
+    # Plot results
+    fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(15, 5))
+    
+    # Elbow Method
+    ax1.plot(K_range, inertias, marker='o', linewidth=2, markersize=8)
+    ax1.set_xlabel('Number of Clusters (K)')
+    ax1.set_ylabel('Inertia')
+    ax1.set_title('Elbow Method for Optimal K')
+    ax1.grid(True, alpha=0.3)
+    
+    # Silhouette Score
+    ax2.plot(K_range, silhouette_scores, marker='s', color='orange', linewidth=2, markersize=8)
+    ax2.set_xlabel('Number of Clusters (K)')
+    ax2.set_ylabel('Silhouette Score')
+    ax2.set_title('Silhouette Score vs Number of Clusters')
+    ax2.grid(True, alpha=0.3)
+    
+    plt.tight_layout()
+    plt.show()
+    
+    # Find optimal K based on silhouette score
+    optimal_k = K_range[np.argmax(silhouette_scores)]
+    print(f"Optimal K based on Silhouette Score: {optimal_k}")
+    
+    return K_range, inertias, silhouette_scores
 
-# Plot Elbow Curve
-plt.plot(K_range, inertia, marker='o')
-plt.xlabel('Number of Clusters (K)')
-plt.ylabel('Inertia')
-plt.title('Elbow Method for Optimal K')
-plt.show()
+# Example usage
+K_range, inertias, silhouette_scores = find_optimal_k(X, max_k=10)
 ```
-
-**Interpretation**: Choose K where the inertia curve forms an "elbow" (point of diminishing returns).
 
 ---
 
-## Conclusion
-This notebook covers the essentials of K-Means clustering, from theory to practical implementation. Use the provided code examples to experiment with synthetic data and apply the Elbow Method to determine the optimal number of clusters for your datasets.
+## Usage Examples
+
+### Example 1: Basic Clustering
+
+```python
+# Load your data
+# X = your_data_here
+
+# Apply K-Means
+kmeans = KMeans(n_clusters=3, random_state=42)
+labels = kmeans.fit_predict(X)
+centroids = kmeans.cluster_centers_
+
+print(f"Number of clusters: {kmeans.n_clusters}")
+print(f"Inertia: {kmeans.inertia_:.2f}")
+```
+
+### Example 2: Real-world Dataset
+
+```python
+from sklearn.datasets import load_iris
+from sklearn.preprocessing import StandardScaler
+
+# Load iris dataset
+iris = load_iris()
+X = iris.data
+
+# Standardize features
+scaler = StandardScaler()
+X_scaled = scaler.fit_transform(X)
+
+# Apply K-Means
+kmeans = KMeans(n_clusters=3, random_state=42)
+labels = kmeans.fit_predict(X_scaled)
+
+# Evaluate clustering
+from sklearn.metrics import adjusted_rand_score
+ari_score = adjusted_rand_score(iris.target, labels)
+print(f"Adjusted Rand Index: {ari_score:.3f}")
+```
+
+---
+
+## Requirements
+
+```
+numpy>=1.21.0
+matplotlib>=3.5.0
+scikit-learn>=1.0.0
+```
+
+## Installation
+
+1. Clone this repository:
+   ```bash
+   git clone <repository-url>
+   cd k-means-clustering
+   ```
+
+2. Install required packages:
+   ```bash
+   pip install -r requirements.txt
+   ```
+
+3. Run the examples:
+   ```bash
+   python kmeans_example.py
+   ```
+
+---
+
+## Best Practices
+
+- **Data Preprocessing**: Always standardize/normalize your features before applying K-Means
+- **Initialization**: Use multiple random initializations (`n_init` parameter) to avoid poor local minima
+- **Evaluation**: Use multiple metrics (inertia, silhouette score, ARI) to evaluate clustering quality
+- **Visualization**: Always visualize your results when possible (use PCA for high-dimensional data)
+
+## Contributing
+
+Contributions are welcome! Please feel free to submit a Pull Request.
+
+## License
+
+This project is licensed under the MIT License - see the LICENSE file for details.
